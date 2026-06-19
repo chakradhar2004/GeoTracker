@@ -2,8 +2,8 @@
 
 A modern **visitor geolocation tracking** web app. When someone opens your link, it captures their precise GPS location (if permitted) or falls back to IP-based location — all logged to a live admin dashboard with an interactive map.
 
-**🌐 Live Demo:** [location-tracker-xi-six.vercel.app](https://location-tracker-xi-six.vercel.app)  
-**🛡️ Admin Dashboard:** [location-tracker-xi-six.vercel.app/admin.html](https://location-tracker-xi-six.vercel.app/admin.html)
+**🌐 Live Demo:** [geotracker-xi-six.vercel.app](https://geotracker-xi-six.vercel.app)  
+**🛡️ Admin Dashboard:** [geotracker-xi-six.vercel.app/admin.html](https://geotracker-xi-six.vercel.app/admin.html)
 
 ---
 
