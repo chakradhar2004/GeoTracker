@@ -1,0 +1,6 @@
+{
+  "name": "location-tracker",
+  "version": "1.0.0",
+  "description": "Visitor geolocation tracking system",
+  "type": "module"
+}

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Connection Passport - GeoTracker</title>
+  <meta name="description" content="Explore your connection details, IP parameters, and geolocation with this elegant interactive tool.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Extra states-specific styles ── */
+    .scanning-anim {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid rgba(99,102,241,0.15);
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+
+    .denied-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(244,63,94,0.1);
+      border: 2px solid rgba(244,63,94,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+    }
+
+    .steps-list {
+      text-align: left;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+      background: rgba(15,23,42,0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .step-num {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      </div>
+      <span class="logo-text">GeoTracker Passport</span>
+    </div>
+    <a href="admin.html" id="btn-admin-dashboard" class="nav-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="9" y1="3" x2="9" y2="21"></line>
+        <line x1="15" y1="3" x2="15" y2="21"></line>
+        <line x1="3" y1="9" x2="21" y2="9"></line>
+        <line x1="3" y1="15" x2="21" y2="15"></line>
+      </svg>
+      Admin Dashboard
+    </a>
+  </header>
+
+  <main class="container">
+
+    <!-- ═══════════════════════════════════════════════════
+         STATE 1: Fallback initial screen
+         (shown only if JS fails – normally auto-skipped)
+    ════════════════════════════════════════════════════ -->
+    <div id="state-request" class="state-container">
+      <div class="glass-card hero-section">
+        <span class="badge">
+          <span style="width:6px;height:6px;background:var(--primary);border-radius:50%;display:inline-block;"></span>
+          Secure Connection Check
+        </span>
+        <h1 class="hero-title">Generate Your Digital Connection Passport</h1>
+        <p class="hero-desc">
+          Authorize a high-precision connection scan to reveal your geolocation, ISP, network details, and browser fingerprint.
+        </p>
+        <button id="btn-authorize" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Scan Connection &amp; Geolocation
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         STATE 2: Scanning / Awaiting Permission
+    ════════════════════════════════════════════════════ -->
+    <div id="state-scanning" class="state-container">
+      <div class="glass-card hero-section" style="padding:3rem 2rem;">
+        <div class="scanning-anim"></div>
+        <h2 class="hero-title" style="font-size:2rem;">Awaiting Location Permission…</h2>
+        <p class="hero-desc">
+          A <strong>browser permission prompt</strong> should appear at the top of this page.<br>
+          Click <strong style="color:var(--accent);">"Allow"</strong> to get your precise GPS coordinates.
+        </p>
+        <div style="display:flex; gap:0.75rem; align-items:center; justify-content:center; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:0.75rem; padding:0.85rem 1.25rem; font-size:0.9rem;">
+          <span style="font-size:1.5rem;">📍</span>
+          <span style="color:var(--text-secondary);">Look for the <strong style="color:var(--accent);">location icon</strong> in your browser's address bar or a pop-up at the top of the page.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         STATE 3: Permission DENIED – Fix Guide
+    ════════════════════════════════════════════════════ -->
+    <div id="state-denied" class="state-container">
+      <div class="glass-card hero-section" style="padding:3rem 2rem;">
+        <div class="denied-icon">🚫</div>
+        <h2 class="hero-title" style="font-size:2rem; background: linear-gradient(135deg,#f43f5e,#fb923c); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+          Location Permission Blocked
+        </h2>
+        <p class="hero-desc">
+          You previously denied location access. Follow these steps to re-enable it for precise coordinates:
+        </p>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <span class="step-num">1</span>
+            <span>Click the <strong>lock / info icon 🔒</strong> in your browser's <strong>address bar</strong> (next to the URL).</span>
+          </div>
+          <div class="step-item">
+            <span class="step-num">2</span>
+            <span>Find <strong>"Location"</strong> in the site permissions list and change it to <strong style="color:var(--accent);">"Allow"</strong>.</span>
+          </div>
+          <div class="step-item">
+            <span class="step-num">3</span>
+            <span>Click <strong>"Retry Scan"</strong> below — no page refresh needed.</span>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+          <button id="btn-retry" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 .49-4.95"></path>
+            </svg>
+            Retry Scan
+          </button>
+          <button class="btn btn-secondary" onclick="document.getElementById('state-denied').classList.remove('active'); document.getElementById('state-request').classList.add('active');">
+            Use IP Fallback Instead
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         STATE 4: Passport Results
+    ════════════════════════════════════════════════════ -->
+    <div id="state-passport" class="state-container">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:1.25rem; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <span class="badge" id="passport-status-badge" style="background:rgba(16,185,129,0.15); color:var(--accent); border-color:rgba(16,185,129,0.3);">
+              Scan Complete
+            </span>
+            <h2 style="font-size:1.75rem; margin-top:0.25rem;">Your Digital Passport</h2>
+          </div>
+          <button id="btn-re-scan" class="btn btn-primary" style="padding:0.5rem 1.25rem; font-size:0.9rem;">
+            Run Scan Again
+          </button>
+        </div>
+
+        <p class="hero-desc" style="text-align:left; margin-bottom:1.5rem;">
+          Below are the connection details detected from your device. This data has been stored in the server log.
+        </p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-label">IP Address</span>
+            <span class="info-value" id="val-ip">…</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Latitude &amp; Longitude</span>
+            <span class="info-value" id="val-coords">…</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Location Accuracy</span>
+            <span class="info-value" id="val-accuracy">…</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">City &amp; Country</span>
+            <span class="info-value" id="val-location">…</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Network Provider / ISP</span>
+            <span class="info-value" id="val-isp">…</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Local Time &amp; Timezone</span>
+            <span class="info-value" id="val-timezone">…</span>
+          </div>
+          <div class="info-card" style="grid-column: 1 / -1;">
+            <span class="info-label">Browser &amp; Operating System</span>
+            <span class="info-value" id="val-ua" style="font-size:0.9rem; font-family:monospace; line-height:1.5; word-break:break-all;">…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Secure Geolocation Tracking Demo • Built with HTML5 &amp; Express.js</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

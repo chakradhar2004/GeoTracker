@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Vercel internal
+.vercel/
+
+# Local database (sensitive visitor data - never commit)
+visits.json
+
+# Environment variables (NEVER commit secrets)
+.env
+.env.local
+.env.production
+
+# Local server (not needed on Vercel)
+server.js
