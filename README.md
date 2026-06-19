@@ -25,10 +25,10 @@ A modern **visitor geolocation tracking** web app. When someone opens your link,
 ## 🖼️ Screenshots
 
 ### Visitor Landing Page
-> Auto-requests location permission on load. Shows a "Digital Connection Passport" with IP, ISP, coordinates, timezone and user agent.
+![Visitor Landing Page](screenshots/visitor-page.png)
 
 ### Admin Dashboard
-> Live stats, dark Leaflet map with color-coded pins (🟢 GPS precision, 🔴 IP fallback), detailed log table with Google Maps links, and CSV export.
+![Admin Dashboard](screenshots/admin-dashboard.png)
 
 ---
 
